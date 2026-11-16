@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://abak2006.github.io/dismusic-download/sitemap.xml

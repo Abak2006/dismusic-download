@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dismusic: per-app audio routing and enhancement for Windows</title>
+  <meta name="description" content="Free Windows 10/11 tray app: choose an output per app, play one source on several devices in sync, let audio follow the screen a window is on, and boost or EQ any app without installing a driver.">
+  <link rel="canonical" href="https://abak2006.github.io/dismusic-download/">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#1b1b1f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dismusic: per-app audio routing and enhancement for Windows">
+  <meta property="og:description" content="Per-app output, multi-device playback, screen-follow audio and per-app boost/EQ for Windows 10 and 11. No driver needed.">
+  <meta property="og:url" content="https://abak2006.github.io/dismusic-download/">
+  <meta property="og:image" content="https://abak2006.github.io/dismusic-download/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Dismusic",
+    "operatingSystem": "Windows 10 (version 2004 or later), Windows 11",
+    "applicationCategory": "MultimediaApplication",
+    "softwareVersion": "0.2.0",
+    "fileSize": "74.4 MB",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "downloadUrl": "https://github.com/Abak2006/dismusic-download/releases/download/v0.2.0/Dismusic-0.2.0-win-x64.exe"
+  }
+  </script>
+  <style>
+    :root {
+      --bg: #1b1b1f;
+      --surface: #25252b;
+      --surface-2: #2d2d34;
+      --stroke: #3a3a42;
+      --text: #f3f3f5;
+      --text-2: #b8b8c2;
+      --accent: #1f5fa8;
+      --accent-hover: #2a6fbe;
+      --accent-text: #ffffff;
+      --link: #8ab8f0;
+      --focus: #8ab8f0;
+      --radius: 8px;
+      --font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      --font-display: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f6f8;
+        --surface: #ffffff;
+        --surface-2: #eeeef2;
+        --stroke: #dcdce2;
+        --text: #1b1b1f;
+        --text-2: #55555f;
+        --link: #1a56a0;
+        --focus: #1a56a0;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.6 var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--link); text-underline-offset: 2px; }
+    a:focus-visible, .button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+    .skip { position: absolute; left: -9999px; }
+    .skip:focus { left: 16px; top: 12px; background: var(--surface); padding: 8px 12px; border-radius: 6px; z-index: 10; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    header.site {
+      border-bottom: 1px solid var(--stroke);
+      background: var(--bg);
+      position: sticky; top: 0; z-index: 5;
+    }
+    header.site .wrap { display: flex; align-items: center; gap: 24px; height: 56px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 600; }
+    .brand img { width: 24px; height: 24px; }
+    nav.top { margin-left: auto; display: flex; gap: 20px; font-size: 14px; }
+    nav.top a { color: var(--text-2); text-decoration: none; }
+    nav.top a:hover { color: var(--text); }
+
+    .intro { padding: 56px 0 32px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; }
+    h1 { font-family: var(--font-display); font-size: clamp(30px, 4vw, 42px); line-height: 1.15; margin: 0 0 16px; font-weight: 600; letter-spacing: -0.01em; }
+    .lead { color: var(--text-2); font-size: 17px; margin: 0 0 24px; max-width: 34em; }
+    .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+    .button {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--accent); color: var(--accent-text);
+      padding: 11px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 15px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .button:hover { background: var(--accent-hover); }
+    .button svg { width: 18px; height: 18px; }
+    .meta { color: var(--text-2); font-size: 13px; }
+    .shot { margin: 0; }
+    .shot img { width: 100%; height: auto; display: block; border-radius: var(--radius); border: 1px solid var(--stroke); }
+    .shot figcaption { color: var(--text-2); font-size: 13px; margin-top: 8px; }
+
+    section { padding: 40px 0; border-top: 1px solid var(--stroke); }
+    h2 { font-family: var(--font-display); font-size: 26px; margin: 0 0 8px; font-weight: 600; }
+    .section-lead { color: var(--text-2); margin: 0 0 24px; max-width: 46em; }
+
+    .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .feature { background: var(--surface); border: 1px solid var(--stroke); border-radius: var(--radius); padding: 18px 20px; }
+    .feature h3 { font-size: 16px; margin: 0 0 6px; font-weight: 600; }
+    .feature p { margin: 0; color: var(--text-2); font-size: 15px; }
+
+    .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; max-width: 760px; }
+    .steps li { counter-increment: step; background: var(--surface); border: 1px solid var(--stroke); border-radius: var(--radius); padding: 14px 18px 14px 56px; position: relative; }
+    .steps li::before {
+      content: counter(step); position: absolute; left: 18px; top: 14px;
+      width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2); color: var(--text);
+      font-size: 13px; font-weight: 600; display: grid; place-items: center;
+    }
+    .steps strong { display: block; }
+    .steps span { color: var(--text-2); font-size: 15px; }
+
+    code, .hash {
+      font-family: "Cascadia Mono", Consolas, ui-monospace, monospace; font-size: 13px;
+      background: var(--surface-2); border: 1px solid var(--stroke); border-radius: 4px; padding: 1px 6px;
+    }
+    .hash { display: block; padding: 10px 12px; overflow-wrap: anywhere; margin-top: 8px; }
+
+    table.req { border-collapse: collapse; width: 100%; max-width: 760px; font-size: 15px; }
+    table.req th, table.req td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--stroke); vertical-align: top; }
+    table.req th { width: 34%; color: var(--text-2); font-weight: 500; }
+
+    ul.plain { margin: 0; padding-left: 20px; max-width: 760px; }
+    ul.plain li { margin: 6px 0; color: var(--text-2); }
+    ul.plain li strong { color: var(--text); font-weight: 600; }
+
+    details { background: var(--surface); border: 1px solid var(--stroke); border-radius: var(--radius); padding: 12px 18px; margin-bottom: 8px; max-width: 760px; }
+    summary { cursor: pointer; font-weight: 600; }
+    details p { color: var(--text-2); margin: 8px 0 2px; }
+
+    footer.site { border-top: 1px solid var(--stroke); padding: 24px 0 40px; color: var(--text-2); font-size: 13px; }
+    footer.site .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+    @media (max-width: 860px) {
+      .intro { grid-template-columns: 1fr; padding-top: 36px; }
+      .features, .gallery { grid-template-columns: 1fr; }
+      nav.top { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="assets/favicon.svg" alt="" width="24" height="24">Dismusic</a>
+      <nav class="top" aria-label="Sections">
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#limits">Limitations</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="wrap intro">
+      <div>
+        <h1>Send every app's sound exactly where you want it.</h1>
+        <p class="lead">Dismusic is a free Windows tray app. Pick an output for each app, play one source on several devices in sync, let audio follow the screen a window is on, and boost or EQ any app, all without installing an audio driver.</p>
+        <div class="cta">
+          <a class="button" href="https://github.com/Abak2006/dismusic-download/releases/download/v0.2.0/Dismusic-0.2.0-win-x64.exe">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg>
+            Download for Windows
+          </a>
+          <span class="meta">Version 0.2.0 · 74.4 MB · Windows 10 (2004+) or 11, 64-bit · <a href="#install">Install notes</a></span>
+        </div>
+      </div>
+      <figure class="shot">
+        <img src="assets/enhance.webp" width="1298" height="848" alt="Dismusic's Enhance page: an app list on the left, and on the right a Bass boost preset, a volume slider at 100% and a 10-band equalizer.">
+      </figure>
+    </div>
+
+    <section id="features">
+      <div class="wrap">
+        <h2>What it does</h2>
+        <p class="section-lead">Five tools in one small app that sits in the notification area and starts with Windows.</p>
+        <div class="features">
+          <article class="feature">
+            <h3>Per-app output</h3>
+            <p>Send your browser to headphones and a game to speakers. Uses the same mechanism as Windows' own volume mixer, so the choice is remembered even without Dismusic.</p>
+          </article>
+          <article class="feature">
+            <h3>Several devices at once</h3>
+            <p>Play one app, or everything on a device, on more outputs at the same time. Copies are kept in sync automatically, with per-device delay and volume. Devices that already play the original are skipped, so nothing echoes.</p>
+          </article>
+          <article class="feature">
+            <h3>Audio follows the screen</h3>
+            <p>Map each monitor to its speakers. Move a video to the TV and its sound moves to the TV's HDMI audio; move it back and the sound comes back.</p>
+          </article>
+          <article class="feature">
+            <h3>Boost and equalizer per app</h3>
+            <p>Raise an app up to 400% with a limiter that prevents clipping, shape it with a 10-band EQ, and save your own presets. Your last choice is remembered and applied again after Windows starts.</p>
+          </article>
+          <article class="feature">
+            <h3>Quick controls in the tray</h3>
+            <p>Click the tray icon for the current output's volume and mute, and switch the Windows default output in one click.</p>
+          </article>
+          <article class="feature">
+            <h3>No driver, no admin</h3>
+            <p>Everything works with built-in Windows audio interfaces. Nothing is installed system-wide, and Dismusic makes no network connections.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="screens-title">
+      <div class="wrap">
+        <h2 id="screens-title">A native Windows 11 app</h2>
+        <p class="section-lead">Fluent design with Mica, a navigation rail and keyboard shortcuts (Ctrl+1 to Ctrl+5 switch pages). It follows your light or dark theme.</p>
+        <div class="gallery">
+          <figure class="shot">
+            <img src="assets/apps.webp" width="1298" height="848" loading="lazy" alt="The Apps page: each app that plays audio has an output picker, a Follow screen switch and the device it plays on now.">
+            <figcaption>Apps: an output per app, or follow the screen.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/multi.webp" width="1298" height="848" loading="lazy" alt="The Multi-output page: a source picker with a Start button, and a row per device with its Windows volume, delay, copy volume and status.">
+            <figcaption>Multi-output: one source, several devices, each with its own volume and delay.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="wrap">
+        <h2>How enhancement works without a driver</h2>
+        <p class="section-lead">Tools like this usually install a virtual sound device. Dismusic doesn't. When you enhance an app, it turns that app down to 1/256 in Windows (it shows as 0% in the volume mixer), so the original keeps playing at -48 dB, which you can't hear. It captures the app with Windows' own loopback interface, multiplies it back by exactly 256, applies your boost and EQ, and plays the result on the same device about 50 to 60 ms later. When you turn enhancement off or quit, the app's volume is put back. If Dismusic ever closes unexpectedly, it restores the volume the next time it starts.</p>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <h2>Install</h2>
+        <p class="section-lead">There's no installer. Dismusic is a single file you can keep anywhere.</p>
+        <ol class="steps">
+          <li><strong>Download Dismusic-0.2.0-win-x64.exe</strong><span>Put it somewhere permanent, for example a <code>Dismusic</code> folder in your user folder. Start with Windows points at wherever the file is.</span></li>
+          <li><strong>Allow it past SmartScreen</strong><span>The app isn't code-signed yet, so Windows shows "Windows protected your PC". Choose <em>More info</em>, then <em>Run anyway</em>. Only do this for a file you downloaded from this page, and check its fingerprint below if you want to be sure.</span></li>
+          <li><strong>Find it in the notification area</strong><span>Dismusic opens its window and adds an icon to the taskbar corner (it may be under "Show hidden icons"). Closing the window keeps it running; quit with Exit from the icon's right-click menu.</span></li>
+          <li><strong>It starts with Windows</strong><span>The first run turns on Start with Windows, because routing and enhancements only apply while Dismusic runs. You can turn it off in Settings.</span></li>
+        </ol>
+
+        <h3 style="margin:28px 0 4px;font-size:16px">File fingerprint (SHA-256)</h3>
+        <p class="section-lead" style="margin-bottom:0">To check your download, run <code>Get-FileHash .\Dismusic-0.2.0-win-x64.exe</code> in PowerShell and compare:</p>
+        <code class="hash">21a12707b22a814a65da9b6edc2d46dd5d53ddef0e83977bbed786fc8f7db8b7</code>
+
+        <h3 style="margin:28px 0 8px;font-size:16px">Requirements</h3>
+        <table class="req">
+          <tr><th scope="row">Windows</th><td>Windows 10 version 2004 (build 19041) or later, or Windows 11. 64-bit.</td></tr>
+          <tr><th scope="row">Permissions</th><td>A normal user account. No administrator rights needed.</td></tr>
+          <tr><th scope="row">Other software</th><td>None. The download includes everything it needs, including .NET.</td></tr>
+        </table>
+
+        <h3 style="margin:28px 0 8px;font-size:16px">Uninstall</h3>
+        <p class="section-lead" style="margin:0">Turn off Start with Windows in Settings, choose Exit from the tray icon, then delete the file. To remove settings and logs too, delete <code>%APPDATA%\Dismusic</code> and <code>%LOCALAPPDATA%\Dismusic</code>.</p>
+      </div>
+    </section>
+
+    <section id="limits">
+      <div class="wrap">
+        <h2>Known limitations</h2>
+        <p class="section-lead">What Windows allows decides some of this, so it's worth knowing before you rely on it.</p>
+        <ul class="plain">
+          <li><strong>Per app, not per window.</strong> Windows routes sound per program. Two browser windows on two screens can't go to different devices; the window on top decides.</li>
+          <li><strong>Some apps choose their own device.</strong> Certain games and apps with their own output setting ignore per-app routing, or only switch after playback restarts.</li>
+          <li><strong>Copies and enhanced audio are slightly late.</strong> Multi-output copies run 60 to 80 ms behind the original (adjustable per device), and enhanced audio about 50 to 60 ms. You may notice it as lip-sync in videos.</li>
+          <li><strong>Other audio enhancers.</strong> Tools like FxSound re-play audio on another device, which Dismusic can't see. Avoid copying to the device such a tool already outputs to.</li>
+          <li><strong>Per-app routing uses an undocumented Windows interface.</strong> It is the same one Windows Settings uses. A future Windows update could change it; if that happens, Dismusic shows a warning and its other features keep working.</li>
+          <li><strong>Protected content</strong> such as some DRM video may be silent in copies, because Windows blocks capturing it.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="privacy">
+      <div class="wrap">
+        <h2>Privacy</h2>
+        <p class="section-lead" style="margin:0">Dismusic makes no network connections and collects nothing. Your settings stay in <code>%APPDATA%\Dismusic\settings.json</code> and a small log in <code>%LOCALAPPDATA%\Dismusic</code>. This website has no analytics, trackers or cookies.</p>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>Questions</h2>
+        <details>
+          <summary>Is it free?</summary>
+          <p>Yes. There's nothing to buy and no account.</p>
+        </details>
+        <details>
+          <summary>Why does the volume mixer show an enhanced app at 0%?</summary>
+          <p>That's how enhancement works without a driver: the original is turned down to an inaudible level and Dismusic plays the processed version instead. Control the app's level with Dismusic's volume slider. Turning enhancement off puts the app's volume back.</p>
+        </details>
+        <details>
+          <summary>I hear an echo when using Multi-output.</summary>
+          <p>That happens when a device gets both the original and a copy. Dismusic skips devices where the source already plays, but it can't see what other enhancers or the "All apps" source send where. Turn off the device that already plays the sound, or choose "Everything on" a device as the source.</p>
+        </details>
+        <details>
+          <summary>Can I use Bluetooth headphones?</summary>
+          <p>Yes. Bluetooth adds its own delay (often 100 to 250 ms), so when mixing it with wired speakers, add delay to the wired device until they line up.</p>
+        </details>
+        <details>
+          <summary>Does it need to keep running?</summary>
+          <p>Per-app output choices are stored by Windows and keep working without Dismusic. Multi-output, screen follow and enhancement need it running, which is why it starts with Windows.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <span>© 2026 Dismusic</span>
+      <span>Built with <a href="https://github.com/naudio/NAudio">NAudio</a> and <a href="https://github.com/lepoco/wpfui">WPF-UI</a> (both MIT licensed).</span>
+    </div>
+  </footer>
+</body>
+</html>
